@@ -21,6 +21,8 @@ class CatalogoMensagens:
 
     def obter(self, estado: str, entrada: EntradaSessao) -> str:
         msgs = self._data.get(estado, [])
+        if isinstance(msgs, dict):
+            msgs = msgs.get(str(max(1, min(5, entrada.intensidade))), [])
         if not msgs:
             return "Estou aqui contigo. Vamos com calma."
 

@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 data/perfis/
+__pycache__/
+*.pyc
