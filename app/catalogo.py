@@ -13,11 +13,22 @@ class CatalogoMensagens:
         with self._path.open("r", encoding="utf-8") as f:
             self._data: Dict[str, List[str]] = json.load(f)
 
+    def estados(self) -> list[str]:
+        return sorted(self._data.keys())
+
     def validar_minimo(self, estados: list[str], minimo: int = 50) -> None:
         for estado in estados:
-            msgs = self._data.get(estado, [])
-            if len(msgs) < minimo:
-                raise ValueError(f"Estado '{estado}' tem {len(msgs)} mensagens (mínimo {minimo}).")
+            msgs = self._data.get(estado, {})
+            total = 0
+
+            if isinstance(msgs, dict):
+                for _, lst in msgs.items():
+                    total += len(lst)
+            else:
+                total = len(msgs)
+
+            if total < minimo:
+                raise ValueError(f"Estado '{estado}' tem {total} mensagens (minimo {minimo}).")
 
     def obter(self, estado: str, entrada: EntradaSessao) -> str:
         msgs = self._data.get(estado, [])
