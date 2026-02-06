@@ -76,29 +76,46 @@ def pedir_nome(default: str = "utilizador") -> str:
     return nome or default
 
 
-def pedir_estado(estados: Sequence[str], default: Optional[str] = None) -> str:
+def pedir_estado_com_emojis(
+    mapa_opcoes: dict[str, tuple[str, str]],
+    default: str = "1",
+    titulo: str = "Escolhe o teu estado"
+) -> str:
     """
-    Pede o estado ao utilizador com choices (evita typos).
+    Menu numérico com emojis.
+    mapa_opcoes exemplo:
+      {
+        "1": ("😟", "ansioso"),
+        "2": ("😞", "triste"),
+        ...
+      }
+
+    Retorna o estado (ex: "ansioso").
     """
-    if not estados:
-        # fallback: sem choices
-        estado = Prompt.ask("Como te sentes hoje? (estado)").strip()
-        return estado
+    linhas = []
+    for k, (emoji, estado) in mapa_opcoes.items():
+        linhas.append(f"[bold]{k}[/bold]  {emoji}  {estado}")
 
-    if default is None:
-        default = estados[0]
+    console.print(Panel("\n".join(linhas), title=titulo, border_style="cyan", expand=False))
 
-    estado = Prompt.ask(
-        "Como te sentes hoje?",
-        choices=list(estados),
-        default=default,
-        show_choices=True,
-    ).strip()
+    escolha = Prompt.ask("Escolhe (1-6)", choices=list(mapa_opcoes.keys()), default=default, show_choices=False)
+    return mapa_opcoes[escolha][1]
+
+
+# (Opcional) fallback para texto livre, caso queiras manter
+def pedir_estado_texto(default: str = "") -> str:
+    estado = Prompt.ask("Escreve o estado", default=default).strip()
     return estado
 
 
 def confirmar(pergunta: str, default: bool = True) -> bool:
-    return Confirm.ask(pergunta, default=default)
+    resp = Prompt.ask(
+        f"{pergunta} [s/n]",
+        choices=["s", "n"],
+        default="s" if default else "n",
+        show_choices=False,
+    )
+    return resp == "s"
 
 
 # -------------------------

@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from pathlib import Path
 import sys
-from datetime import date
 
 from ui.rich_ui import (
-    cabecalho,
-    pedir_estado,
-    mostrar_resposta,
+    mostrar_cabecalho,
+    pedir_estado_com_emojis,
+    mostrar_mensagem_final,
+    mostrar_info,
+    mostrar_aviso,
     mostrar_historico,
-    mostrar_stats,
-    pedir_continuar,
+    confirmar,
 )
 
 from app.app import HelpApp
@@ -33,27 +33,35 @@ def resource_path(relative_path: str) -> Path:
 
 def intensidade_auto(perfil, estado: str) -> int:
     """
-    Começa em 3.0.
-    Se for um novo dia e o estado repetir, soma +0.25.
-    Quando atingir 4.00, passa a usar frases de intensidade 4 (bucket int()).
+    Intensidade automática por SESSÃO (não por dia):
+    - Estado novo (ou mudou): começa em 3.0
+    - Mesmo estado consecutivo: multiplica por 1.25 (cap 5.0)
+    - Bucket para escolher mensagens: int(valor) => 3,4,5
     """
-    hoje = date.today().isoformat()
 
-    # cria o dicionário se ainda não existir no perfil
+    # inicializações seguras (não rebenta se o perfil for antigo)
     if not hasattr(perfil, "intensidades") or perfil.intensidades is None:
         perfil.intensidades = {}
+    if not hasattr(perfil, "ultimo_estado"):
+        perfil.ultimo_estado = None
+    if not hasattr(perfil, "streak_estado"):
+        perfil.streak_estado = 0
 
-    info = perfil.intensidades.get(estado)
-
-    if not info:
-        perfil.intensidades[estado] = {"valor": 3.0, "ultima_data": hoje}
+    # se mudou de estado, reinicia streak e reinicia valor desse estado para 3.0
+    if perfil.ultimo_estado != estado:
+        perfil.ultimo_estado = estado
+        perfil.streak_estado = 1
+        perfil.intensidades[estado] = {"valor": 3.0}
         return 3
 
-    if hoje > info.get("ultima_data", ""):
-        info["valor"] = min(5.0, float(info.get("valor", 3.0)) + 0.25)
-        info["ultima_data"] = hoje
+    # mesmo estado consecutivo -> agrava
+    perfil.streak_estado += 1
+    info = perfil.intensidades.get(estado, {"valor": 3.0})
+    novo_valor = min(5.0, float(info.get("valor", 3.0)) * 1.25)
+    info["valor"] = novo_valor
+    perfil.intensidades[estado] = info
 
-    bucket = int(info["valor"])
+    bucket = int(novo_valor)  # 3.0-3.99 => 3, 4.0-4.99 => 4, 5.0 => 5
     return max(1, min(5, bucket))
 
 
@@ -75,19 +83,50 @@ def main():
     aprendizagem = AprendizagemBasica()
 
     # UI
-    cabecalho()
+    mostrar_cabecalho()
 
     # utilizador
-    nome = input("Nome do utilizador: ").strip()  # (se quiseres também posso trocar isto para rich Prompt)
-    perfil = store.carregar(nome)
+    raw_nome = input("Nome de Utilizador: ").strip()
 
-    # estados disponíveis: vamos buscar do catálogo
-    # ADICIONA NO CatalogoMensagens: def estados(self): return sorted(self._data.keys())
+    # feedback UX (antes de carregar)
+    if store.existe(raw_nome):
+        mostrar_info(f"Bem-vindo de volta, {raw_nome}!")
+    else:
+        mostrar_info(f"Novo utilizador criado: {raw_nome}")
+
+    # carrega (ou cria) o perfil real a partir de data/perfis
+    perfil = store.carregar(raw_nome)
+
+    # estados disponíveis vindos do mensagens.json
     estados_disponiveis = catalogo.estados()
+    # menu 1-6 com emojis (só ficam os estados que existirem no JSON)
+    opcoes = {
+        "1": ("😟", "ansioso"),
+        "2": ("😞", "triste"),
+        "3": ("😤", "zangado"),
+        "4": ("😴", "cansado"),
+        "5": ("😌", "calmo"),
+        "6": ("🔥", "motivado"),
+    }
+
+    opcoes = {k: v for k, v in opcoes.items() if v[1] in estados_disponiveis}
+
+    # fallback caso o teu JSON tenha nomes diferentes e o filtro tenha removido tudo
+    if not opcoes:
+        mostrar_aviso("Não há estados do menu a bater com o mensagens.json. Verifica as keys do JSON.")
+        return
 
     # loop
     while True:
-        estado = pedir_estado(estados_disponiveis, default=estados_disponiveis[0])
+        raw_estado = pedir_estado_com_emojis(opcoes, default=None)
+        estado = raw_estado.strip().lower()
+
+        # (opcional) se implementares catalogo.normalizar_estado, troca pela linha abaixo:
+        # estado = catalogo.normalizar_estado(raw_estado)
+
+        if estado not in estados_disponiveis:
+            mostrar_aviso("Estado não reconhecido. Tenta novamente.")
+            continue
 
         intensidade = intensidade_auto(perfil, estado)
 
@@ -103,18 +142,20 @@ def main():
         aprendizagem.atualizar(perfil, entrada)
         store.guardar(perfil)
 
-        mostrar_resposta(estado, intensidade, texto, data=getattr(entrada, "data", None))
+        # UI: mensagem
+        mostrar_mensagem_final(estado, intensidade, texto)
 
-        mostrar_stats(
-            total_sessoes=perfil.total_sessoes,
-            estado=estado,
-            contagem_estado=perfil.contagem_estados.get(estado, 0),
-            media_intensidade=perfil.media_intensidade(estado),
+        # UI: stats (não tens mostrar_stats no rich_ui.py)
+        mostrar_info(
+            f"Stats: total={perfil.total_sessoes}, "
+            f"{estado}={perfil.contagem_estados.get(estado, 0)}, "
+            f"média_int={perfil.media_intensidade(estado):.2f}"
         )
 
-        if not pedir_continuar():
+        if not confirmar("Queres continuar?", default=None):
             break
 
+    # histórico (últimas 5)
     mostrar_historico(app.ver_historico(5), titulo="Histórico (últimas 5)")
 
 

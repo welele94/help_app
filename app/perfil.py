@@ -10,6 +10,11 @@ class PerfilUtilizador:
     contagem_estados: Dict[str, int] = field(default_factory=dict)
     soma_intensidade: Dict[str, int] = field(default_factory=dict)
 
+    #necessario para algoritmo de calculo de intensidade dos estados de espirito 
+    intensidades: dict[str, dict] = field(default_factory=dict)
+    ultimo_estado: str | None = None
+    streal_estado: int = 0
+
     def registar_sessao(self, estado: str, intensidade: int) -> None:
         self.total_sessoes += 1
         self.contagem_estados[estado] = self.contagem_estados.get(estado, 0) + 1
@@ -20,3 +25,4 @@ class PerfilUtilizador:
         if c == 0:
             return 0.0
         return self.soma_intensidade.get(estado, 0) / c
+    

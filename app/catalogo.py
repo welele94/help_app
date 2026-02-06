@@ -1,6 +1,7 @@
 from __future__ import annotations
 import json
 import hashlib
+import unicodedata
 from pathlib import Path
 from typing import Dict, List
 
@@ -15,6 +16,21 @@ class CatalogoMensagens:
 
     def estados(self) -> list[str]:
         return sorted(self._data.keys())
+    
+    def normalizar_estado(self, estado:str) -> str:
+        estado = estado.strip().lower()
+        estado = unicodedata.normalize("NFD", estado)
+        estado = "".join(c for c in estado if unicodedata.category(c) != "Mn")
+
+        mapa = {
+            "ansiosa": "ansioso",
+            "zangada": "zangado",
+            "motivada": "motivado",
+            "calma": "calmo",
+            "cansada": "cansado"
+        }
+
+        return mapa.get(estado, estado)
 
     def validar_minimo(self, estados: list[str], minimo: int = 50) -> None:
         for estado in estados:
@@ -38,7 +54,8 @@ class CatalogoMensagens:
             return "Estou aqui contigo. Vamos com calma."
 
         # determinístico (sem random)
-        chave = f"{entrada.estado}|{entrada.intensidade}|{getattr(entrada, 'utilizador', '')}"
+        data = getattr(entrada, "data", "")
+        chave = f"{estado}|{entrada.intensidade}|{getattr(entrada, 'utilizador', '')}|{data}"
         h = hashlib.sha256(chave.encode("utf-8")).hexdigest()
         idx = int(h[:8], 16) % len(msgs)
         return str(msgs[idx]).strip()
