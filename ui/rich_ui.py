@@ -102,18 +102,17 @@ def pedir_estado_com_emojis(
     return mapa_opcoes[escolha][1]
 
 
-# (Opcional) fallback para texto livre, caso queiras manter
+# fallback para texto livre, caso queiras manter
 def pedir_estado_texto(default: str = "") -> str:
     estado = Prompt.ask("Escreve o estado", default=default).strip()
     return estado
 
 
-def confirmar(pergunta: str, default: bool = True) -> bool:
+def confirmar(pergunta: str) -> bool:
     resp = Prompt.ask(
         f"{pergunta} [s/n]",
         choices=["s", "n"],
-        default="s" if default else "n",
-        show_choices=False,
+        show_choices=True,
     )
     return resp == "s"
 

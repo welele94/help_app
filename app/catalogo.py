@@ -53,7 +53,7 @@ class CatalogoMensagens:
         if not msgs:
             return "Estou aqui contigo. Vamos com calma."
 
-        # determinístico (sem random)
+        # determinístico por entrada (muda com o timestamp da sessão)
         data = getattr(entrada, "data", "")
         chave = f"{estado}|{entrada.intensidade}|{getattr(entrada, 'utilizador', '')}|{data}"
         h = hashlib.sha256(chave.encode("utf-8")).hexdigest()

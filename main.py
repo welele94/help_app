@@ -23,6 +23,7 @@ from app.historico import Historico
 
 from app.perfil_store import PerfilStoreJSON
 from app.aprendizagem import AprendizagemBasica
+from app.algoritmo_intensidade import calcular_intensidade
 
 
 def resource_path(relative_path: str) -> Path:
@@ -31,38 +32,6 @@ def resource_path(relative_path: str) -> Path:
     return Path(__file__).resolve().parent / relative_path
 
 
-def intensidade_auto(perfil, estado: str) -> int:
-    """
-    Intensidade automática por SESSÃO (não por dia):
-    - Estado novo (ou mudou): começa em 3.0
-    - Mesmo estado consecutivo: multiplica por 1.25 (cap 5.0)
-    - Bucket para escolher mensagens: int(valor) => 3,4,5
-    """
-
-    # inicializações seguras (não rebenta se o perfil for antigo)
-    if not hasattr(perfil, "intensidades") or perfil.intensidades is None:
-        perfil.intensidades = {}
-    if not hasattr(perfil, "ultimo_estado"):
-        perfil.ultimo_estado = None
-    if not hasattr(perfil, "streak_estado"):
-        perfil.streak_estado = 0
-
-    # se mudou de estado, reinicia streak e reinicia valor desse estado para 3.0
-    if perfil.ultimo_estado != estado:
-        perfil.ultimo_estado = estado
-        perfil.streak_estado = 1
-        perfil.intensidades[estado] = {"valor": 3.0}
-        return 3
-
-    # mesmo estado consecutivo -> agrava
-    perfil.streak_estado += 1
-    info = perfil.intensidades.get(estado, {"valor": 3.0})
-    novo_valor = min(5.0, float(info.get("valor", 3.0)) * 1.25)
-    info["valor"] = novo_valor
-    perfil.intensidades[estado] = info
-
-    bucket = int(novo_valor)  # 3.0-3.99 => 3, 4.0-4.99 => 4, 5.0 => 5
-    return max(1, min(5, bucket))
 
 
 def main():
@@ -128,7 +97,7 @@ def main():
             mostrar_aviso("Estado não reconhecido. Tenta novamente.")
             continue
 
-        intensidade = intensidade_auto(perfil, estado)
+        intensidade = calcular_intensidade(perfil, estado)
 
         entrada = EntradaSessao(
             estado=estado,
@@ -152,7 +121,7 @@ def main():
             f"média_int={perfil.media_intensidade(estado):.2f}"
         )
 
-        if not confirmar("Queres continuar?", default=None):
+        if not confirmar("Queres continuar?"):
             break
 
     # histórico (últimas 5)

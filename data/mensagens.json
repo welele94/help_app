@@ -1303,5 +1303,47 @@
       "Estou motivado e a vida parece editável.",
       "Hoje o meu “sim” está mais alto que o meu “pois”."
     ]
+  },
+  "calmo": {
+    "1": [
+      "Estou calmo e tudo parece mais simples.",
+      "Hoje a mente está serena e o corpo acompanha.",
+      "Calma leve: o mundo não pesa tanto agora.",
+      "Sinto-me tranquilo e presente.",
+      "Hoje respiro e sinto espaço para pensar.",
+      "A cabeça está quieta e isso sabe bem."
+    ],
+    "2": [
+      "Calma firme: sem pressa, mas com clareza.",
+      "Sinto-me estável e com o ritmo certo.",
+      "Hoje a tranquilidade está a segurar o dia.",
+      "A mente está mais suave e o corpo agradece.",
+      "Estou calmo e consigo focar no que importa.",
+      "Sem drama: apenas equilíbrio."
+    ],
+    "3": [
+      "Uma calma sólida, daquelas que não se perdem fácil.",
+      "Estou centrado e com energia estável.",
+      "Hoje a serenidade ajuda-me a decidir melhor.",
+      "Tranquilo e com foco limpo.",
+      "A calma está a dar estrutura ao meu dia.",
+      "Sinto-me bem e com espaço mental."
+    ],
+    "4": [
+      "Calma profunda: tudo parece no lugar.",
+      "Estou sereno e com a cabeça alinhada.",
+      "Hoje a tranquilidade é a minha base.",
+      "Sinto-me centrado e leve.",
+      "A mente está clara e o corpo relaxado.",
+      "Calma alta: firme, silenciosa e boa."
+    ],
+    "5": [
+      "Serenidade máxima: paz e clareza total.",
+      "Hoje a calma está no topo e eu estou bem.",
+      "Sinto-me plenamente tranquilo.",
+      "Tudo está tranquilo por dentro e por fora.",
+      "Calma total: foco, equilíbrio e leveza.",
+      "Estou em modo paz completa."
+    ]
   }
 }
