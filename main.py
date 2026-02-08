@@ -124,8 +124,15 @@ def main():
         if not confirmar("Queres continuar?"):
             break
 
-    # histórico (últimas 5)
-    mostrar_historico(app.ver_historico(5), titulo="Histórico (últimas 5)")
+    # estatísticas/histórico (opcional)
+    if confirmar("Queres ver as estatísticas?"):
+        mostrar_info(
+            f"Stats: total={perfil.total_sessoes}, "
+            f"média_global={sum(perfil.soma_intensidade.values())/max(1, perfil.total_sessoes):.2f}"
+        )
+        mostrar_historico(app.ver_historico(5), titulo="Histórico (últimas 5)")
+    else:
+        mostrar_info("Foi um gosto ajudar-te!")
 
 
 if __name__ == "__main__":

@@ -7,8 +7,8 @@ class Historico:
     def __init__(self, persistencia: IPersistencia) -> None:
         self._p = persistencia
 
-    def registar(self, texto: str) -> None:
-        self._p.registar(texto)
+    def registar(self, entrada: dict) -> None:
+        self._p.registar(entrada)
 
-    def obter_ultimas(self, n: int) -> list[str]:
+    def obter_ultimas(self, n: int) -> list[dict]:
         return self._p.obter_ultimas(n)

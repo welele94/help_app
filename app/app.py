@@ -14,7 +14,14 @@ class HelpApp:
 
     def correr_sessao(self, msg: MensagemCatalogo, entrada: EntradaSessao) -> str:
         texto = self.pipeline.processar(msg, entrada)
-        self.historico.registar(texto)
+        self.historico.registar(
+            {
+                "data": getattr(entrada, "data", ""),
+                "estado": entrada.estado,
+                "intensidade": entrada.intensidade,
+                "mensagem": texto,
+            }
+        )
         return texto
 
     def ver_historico(self, n: int = 5) -> list[str]:
