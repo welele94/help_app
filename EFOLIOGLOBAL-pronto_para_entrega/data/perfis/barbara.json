@@ -1,0 +1,37 @@
+{
+  "nome": "barbara",
+  "total_sessoes": 15,
+  "contagem_estados": {
+    "zangado": 3,
+    "motivado": 5,
+    "calmo": 1,
+    "ansioso": 1,
+    "cansado": 5
+  },
+  "soma_intensidade": {
+    "zangado": 9,
+    "motivado": 18,
+    "calmo": 3,
+    "ansioso": 3,
+    "cansado": 20
+  },
+  "intensidades": {
+    "motivado": {
+      "valor": 3.0
+    },
+    "calmo": {
+      "valor": 3.0
+    },
+    "ansioso": {
+      "valor": 3.0
+    },
+    "zangado": {
+      "valor": 3.75
+    },
+    "cansado": {
+      "valor": 5.0
+    }
+  },
+  "ultimo_estado": "cansado",
+  "streal_estado": 0
+}

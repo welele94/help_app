@@ -1,0 +1,17 @@
+{
+  "nome": "nicolau faiscas",
+  "total_sessoes": 4,
+  "contagem_estados": {
+    "zangado": 4
+  },
+  "soma_intensidade": {
+    "zangado": 15
+  },
+  "intensidades": {
+    "zangado": {
+      "valor": 5.0
+    }
+  },
+  "ultimo_estado": "zangado",
+  "streal_estado": 0
+}

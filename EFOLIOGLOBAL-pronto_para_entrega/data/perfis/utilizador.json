@@ -1,0 +1,27 @@
+{
+  "nome": "",
+  "total_sessoes": 8,
+  "contagem_estados": {
+    "triste": 4,
+    "zangado": 2,
+    "motivado": 2
+  },
+  "soma_intensidade": {
+    "triste": 13,
+    "zangado": 6,
+    "motivado": 6
+  },
+  "intensidades": {
+    "triste": {
+      "valor": 4.6875
+    },
+    "zangado": {
+      "valor": 3.75
+    },
+    "motivado": {
+      "valor": 3.75
+    }
+  },
+  "ultimo_estado": "motivado",
+  "streal_estado": 0
+}

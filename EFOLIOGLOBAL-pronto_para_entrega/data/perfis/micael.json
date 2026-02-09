@@ -1,0 +1,42 @@
+{
+  "nome": "Micael",
+  "total_sessoes": 38,
+  "contagem_estados": {
+    "cansado": 9,
+    "ansioso": 5,
+    "triste": 7,
+    "zangado": 8,
+    "calmo": 4,
+    "motivado": 5
+  },
+  "soma_intensidade": {
+    "cansado": 31,
+    "ansioso": 11,
+    "triste": 20,
+    "zangado": 27,
+    "calmo": 7,
+    "motivado": 18
+  },
+  "intensidades": {
+    "ansioso": {
+      "valor": 0.026250000000000023
+    },
+    "cansado": {
+      "valor": 2.584375
+    },
+    "zangado": {
+      "valor": 2.5142187500000004
+    },
+    "calmo": {
+      "valor": 0.47843750000000007
+    },
+    "triste": {
+      "valor": 0.9097500000000003
+    },
+    "motivado": {
+      "valor": 2.7422578125
+    }
+  },
+  "ultimo_estado": "ansioso",
+  "streal_estado": 0
+}

@@ -1,0 +1,12 @@
+{
+  "nome": "Bárbara",
+  "total_sessoes": 11,
+  "contagem_estados": {
+    "zangado": 9,
+    "ansioso": 2
+  },
+  "soma_intensidade": {
+    "zangado": 36,
+    "ansioso": 3
+  }
+}
