@@ -1,42 +1,73 @@
 {
   "nome": "Micael",
-  "total_sessoes": 38,
+  "total_sessoes": 45,
   "contagem_estados": {
-    "cansado": 9,
+    "cansado": 12,
     "ansioso": 5,
     "triste": 7,
-    "zangado": 8,
+    "zangado": 10,
     "calmo": 4,
-    "motivado": 5
+    "motivado": 5,
+    "feliz": 2
   },
   "soma_intensidade": {
-    "cansado": 31,
+    "cansado": 37,
     "ansioso": 11,
     "triste": 20,
-    "zangado": 27,
+    "zangado": 30,
     "calmo": 7,
-    "motivado": 18
+    "motivado": 18,
+    "feliz": 6
   },
+  "historico": [
+    {
+      "data": 1770677807269864000,
+      "estado": "cansado",
+      "intensidade": 2,
+      "mensagem": "Se estás a procrastinar, talvez precises de descanso, não de pressão."
+    },
+    {
+      "data": 1770677821470523000,
+      "estado": "feliz",
+      "intensidade": 3,
+      "mensagem": "Estou feliz porque o juízo ficou em casa."
+    },
+    {
+      "data": 1770677845645470000,
+      "estado": "zangado",
+      "intensidade": 1,
+      "mensagem": "Estás zangado, mas amanhã já nem te lembras porquê."
+    },
+    {
+      "data": 1770677854656955000,
+      "estado": "feliz",
+      "intensidade": 3,
+      "mensagem": "Estou feliz, versão autossabotagem consciente."
+    }
+  ],
   "intensidades": {
     "ansioso": {
-      "valor": 0.026250000000000023
+      "valor": 0.0
     },
     "cansado": {
-      "valor": 2.584375
+      "valor": 1.9661121093750005
     },
     "zangado": {
-      "valor": 2.5142187500000004
+      "valor": 1.7213011718750009
     },
     "calmo": {
-      "valor": 0.47843750000000007
+      "valor": 0.0
     },
     "triste": {
-      "valor": 0.9097500000000003
+      "valor": 0.0
     },
     "motivado": {
-      "valor": 2.7422578125
+      "valor": 1.2422578125000001
+    },
+    "feliz": {
+      "valor": 3.0450000000000004
     }
   },
-  "ultimo_estado": "ansioso",
+  "ultimo_estado": "feliz",
   "streal_estado": 0
 }

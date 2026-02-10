@@ -4,7 +4,7 @@ from typing import Any
 
 
 def _bucket(valor: float) -> int:
-    # 3.0-3.99 => 3, 4.0-4.99 => 4, 5.0 => 5
+    # bucket simples p/ escolher mensagens (sem stress)
     return max(1, min(5, int(valor)))
 
 
@@ -12,6 +12,7 @@ def _decair_outros(perfil: Any, estado_atual: str) -> None:
     """
     Quando se muda de estado, todos os outros perdem 0.25 até um mínimo de 0.0.
     """
+    # isto ajuda a "esquecer" estados antigos de forma gradual
     for est, info in list(perfil.intensidades.items()):
         if est == estado_atual:
             continue
@@ -37,6 +38,7 @@ def calcular_intensidade(perfil: Any, estado: str) -> int:
         perfil.streak_estado = 0
 
     if perfil.ultimo_estado != estado:
+        # mudou de estado -> decay nos outros + boost leve no atual
         _decair_outros(perfil, estado)
         perfil.ultimo_estado = estado
         perfil.streak_estado = 1

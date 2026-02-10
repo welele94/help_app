@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from typing import Any, Iterable, Optional, Sequence
+from datetime import datetime
 
 from rich.console import Console
 from rich.panel import Panel
@@ -81,7 +82,8 @@ def pedir_nome(default: str = "utilizador") -> str:
 def pedir_estado_com_emojis(
     mapa_opcoes: dict[str, tuple[str, str]],
     default: str = "1",
-    titulo: str = "Escolha o seu estado"
+    titulo: str = "Escolha o seu estado",
+    extras: Optional[dict[str, str]] = None,
 ) -> str:
     """
     Menu numérico com emojis.
@@ -102,6 +104,7 @@ def pedir_estado_com_emojis(
 
     tabela = Table(show_header=False, box=None, pad_edge=False)
     tabela.add_column(justify="left", no_wrap=True)
+    tabela.add_column(justify="center", no_wrap=True, width=3)
     tabela.add_column(justify="left", no_wrap=True)
 
     for i in range(meio):
@@ -109,12 +112,18 @@ def pedir_estado_com_emojis(
         d = direita[i] if i < len(direita) else ("", "", "")
         left = f"[bold]{e[0]}[/bold]  {e[1]}  {e[2]}" if e[0] else ""
         right = f"[bold]{d[0]}[/bold]  {d[1]}  {d[2]}" if d[0] else ""
-        tabela.add_row(left, right)
+        sep = "[dim]│[/dim]" if left and right else ""
+        tabela.add_row(left, sep, right)
 
     console.print(Panel(tabela, title=titulo, border_style="cyan", expand=False))
 
-    escolha = Prompt.ask("Escolha (1-6)", choices=list(mapa_opcoes.keys()), default=default, show_choices=False)
-    return mapa_opcoes[escolha][1]
+    extras = extras or {}
+    if extras:
+        console.print("  " + "  |  ".join(f"[bold]{k.upper()}[/bold] {v}" for k, v in extras.items()))
+
+    escolhas = list(mapa_opcoes.keys()) + list(extras.keys())
+    escolha = Prompt.ask("Escolha (1-6 ou H/Q)", choices=escolhas, default=default, show_choices=False)
+    return escolha.lower().strip()
 
 
 # fallback para texto livre, caso queiras manter
@@ -203,6 +212,13 @@ def mostrar_historico(entradas: Iterable[Any], titulo: str = "Histórico") -> No
     for e in entradas:
         count += 1
         data = _safe_str(_get(e, "data", "data_hora", "timestamp", default=""))
+        # se vier em nanos (time_ns), converte para data/hora legível
+        if data.isdigit():
+            try:
+                ts_ns = int(data)
+                data = datetime.fromtimestamp(ts_ns / 1_000_000_000).strftime("%Y-%m-%d %H:%M")
+            except Exception:
+                pass
         estado = _safe_str(_get(e, "estado", default=""))
         intensidade = _safe_str(_get(e, "intensidade", default=""))
         msg = _safe_str(_get(e, "mensagem", "frase", "texto", default=""))

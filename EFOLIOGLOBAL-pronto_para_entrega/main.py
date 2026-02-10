@@ -109,6 +109,14 @@ def main():
 
         # aprendizagem + persistência do perfil
         aprendizagem.atualizar(perfil, entrada)
+        perfil.historico.append(
+            {
+                "data": getattr(entrada, "data", ""),
+                "estado": estado,
+                "intensidade": intensidade,
+                "mensagem": texto,
+            }
+        )
         store.guardar(perfil)
 
         # UI: mensagem
@@ -121,18 +129,18 @@ def main():
             f"média_int={perfil.media_intensidade(estado):.2f}"
         )
 
-        if not confirmar("Queres continuar?"):
+        if not confirmar("Quer continuar?"):
             break
 
     # estatísticas/histórico (opcional)
-    if confirmar("Queres ver as estatísticas?"):
+    if confirmar("Quer ver o histórico?"):
         mostrar_info(
             f"Stats: total={perfil.total_sessoes}, "
             f"média_global={sum(perfil.soma_intensidade.values())/max(1, perfil.total_sessoes):.2f}"
         )
-        mostrar_historico(app.ver_historico(5), titulo="Histórico (últimas 5)")
+        mostrar_historico(perfil.historico[-5:], titulo="Histórico (últimas 5)")
     else:
-        mostrar_info("Foi um gosto ajudar-te!")
+        mostrar_info("Foi um gosto ajudar-lhe!")
 
 
 if __name__ == "__main__":

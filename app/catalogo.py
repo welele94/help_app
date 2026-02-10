@@ -22,12 +22,11 @@ class CatalogoMensagens:
         estado = unicodedata.normalize("NFD", estado)
         estado = "".join(c for c in estado if unicodedata.category(c) != "Mn")
 
+        # pequenas normalizações para bater com as keys do JSON
         mapa = {
             "ansiosa": "ansioso",
-            "triste": "triste",
             "zangada": "zangado",
             "motivada": "motivado",
-            "feliz": "feliz",
             "cansada": "cansado"
         }
 
@@ -50,6 +49,7 @@ class CatalogoMensagens:
     def obter(self, estado: str, entrada: EntradaSessao) -> str:
         msgs = self._data.get(estado, [])
         if isinstance(msgs, dict):
+            # intensidade vem em 1..5, escolhemos o grupo certo
             msgs = msgs.get(str(max(1, min(5, entrada.intensidade))), [])
         if not msgs:
             return "Estou aqui contigo. Vamos com calma."

@@ -9,6 +9,7 @@ class PerfilUtilizador:
     total_sessoes: int = 0
     contagem_estados: Dict[str, int] = field(default_factory=dict)
     soma_intensidade: Dict[str, int] = field(default_factory=dict)
+    historico: list[dict] = field(default_factory=list)
 
     #necessario para algoritmo de calculo de intensidade dos estados de espirito 
     intensidades: dict[str, dict] = field(default_factory=dict)

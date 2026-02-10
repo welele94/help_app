@@ -8,6 +8,8 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.prompt import Prompt, Confirm
 from rich.text import Text
+from rich.align import Align
+
 
 console = Console()
 
@@ -44,7 +46,7 @@ def _safe_str(x: Any) -> str:
 # -------------------------
 # UI básica
 # -------------------------
-def mostrar_cabecalho(titulo: str = "Help!", subtitulo: str = "A tua app de estados de espírito") -> None:
+def mostrar_cabecalho(titulo: str = "Help!", subtitulo: str = "A sua app de estados de espírito") -> None:
     text = Text()
     text.append(titulo, style="bold cyan")
     text.append("\n")
@@ -72,14 +74,14 @@ def mostrar_erro(msg: str) -> None:
 # Inputs (Prompt)
 # -------------------------
 def pedir_nome(default: str = "utilizador") -> str:
-    nome = Prompt.ask("Nome do utilizador", default=default).strip()
+    nome = Prompt.ask("Olá! Qual o seu nome?", default=default).strip()
     return nome or default
 
 
 def pedir_estado_com_emojis(
     mapa_opcoes: dict[str, tuple[str, str]],
     default: str = "1",
-    titulo: str = "Escolhe o teu estado"
+    titulo: str = "Escolha o seu estado"
 ) -> str:
     """
     Menu numérico com emojis.
@@ -92,19 +94,32 @@ def pedir_estado_com_emojis(
 
     Retorna o estado (ex: "ansioso").
     """
-    linhas = []
-    for k, (emoji, estado) in mapa_opcoes.items():
-        linhas.append(f"[bold]{k}[/bold]  {emoji}  {estado}")
+    # layout em 2 colunas (3+3)
+    items = [(k, v[0], v[1]) for k, v in sorted(mapa_opcoes.items(), key=lambda x: int(x[0]))]
+    meio = (len(items) + 1) // 2
+    esquerda = items[:meio]
+    direita = items[meio:]
 
-    console.print(Panel("\n".join(linhas), title=titulo, border_style="cyan", expand=False))
+    tabela = Table(show_header=False, box=None, pad_edge=False)
+    tabela.add_column(justify="left", no_wrap=True)
+    tabela.add_column(justify="left", no_wrap=True)
 
-    escolha = Prompt.ask("Escolhe (1-6)", choices=list(mapa_opcoes.keys()), default=default, show_choices=False)
+    for i in range(meio):
+        e = esquerda[i] if i < len(esquerda) else ("", "", "")
+        d = direita[i] if i < len(direita) else ("", "", "")
+        left = f"[bold]{e[0]}[/bold]  {e[1]}  {e[2]}" if e[0] else ""
+        right = f"[bold]{d[0]}[/bold]  {d[1]}  {d[2]}" if d[0] else ""
+        tabela.add_row(left, right)
+
+    console.print(Panel(tabela, title=titulo, border_style="cyan", expand=False))
+
+    escolha = Prompt.ask("Escolha (1-6)", choices=list(mapa_opcoes.keys()), default=default, show_choices=False)
     return mapa_opcoes[escolha][1]
 
 
 # fallback para texto livre, caso queiras manter
 def pedir_estado_texto(default: str = "") -> str:
-    estado = Prompt.ask("Escreve o estado", default=default).strip()
+    estado = Prompt.ask("Escreva o estado", default=default).strip()
     return estado
 
 
@@ -120,26 +135,34 @@ def confirmar(pergunta: str) -> bool:
 # -------------------------
 # Outputs principais
 # -------------------------
+
 def mostrar_mensagem_final(
     estado: str,
     intensidade: int,
     frase: str,
     titulo: str = "Mensagem do dia",
 ) -> None:
-    """
-    Mostra estado + intensidade + frase num Panel.
-    """
-    corpo = (
-        f"[bold]Estado:[/bold] {estado}\n"
-        f"[bold]Intensidade:[/bold] {intensidade}/5\n\n"
-        f"{frase}"
+    # “aumentar” o texto duplicando linhas + espaçamento
+    frase_grande = "\n\n".join([frase.upper()])
+
+    corpo = Text()
+    corpo.append(f"Estado: {estado}\n", style="bold cyan")
+    corpo.append(f"Intensidade: {intensidade}/5\n\n", style="dim")
+    corpo.append(frase_grande, style="bold white")
+
+    painel = Panel(
+        Align.center(corpo),
+        title=f"💬 {titulo}",
+        border_style="magenta",
+        padding=(2, 4),
+        width=70,
     )
-    console.print(Panel(corpo, title=titulo, border_style="magenta", expand=False))
+
+    console.print(painel)
 
 
 def mostrar_resumo_sessao(entrada: Any, frase: str) -> None:
     """
-    Se preferires passar a EntradaSessao inteira.
     Tenta apanhar nomes comuns:
       estado, intensidade, data/data_hora, utilizador/nome
     """

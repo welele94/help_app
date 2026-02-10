@@ -8,6 +8,7 @@ class Historico:
         self._p = persistencia
 
     def registar(self, entrada: dict) -> None:
+        # delega a persistência (memória, ficheiro, etc.)
         self._p.registar(entrada)
 
     def obter_ultimas(self, n: int) -> list[dict]:

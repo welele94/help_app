@@ -17,6 +17,7 @@ class PerfilUtilizador:
     streal_estado: int = 0
 
     def registar_sessao(self, estado: str, intensidade: int) -> None:
+        # stats simples por estado
         self.total_sessoes += 1
         self.contagem_estados[estado] = self.contagem_estados.get(estado, 0) + 1
         self.soma_intensidade[estado] = self.soma_intensidade.get(estado, 0) + int(intensidade)

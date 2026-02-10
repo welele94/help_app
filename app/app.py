@@ -14,6 +14,7 @@ class HelpApp:
 
     def correr_sessao(self, msg: MensagemCatalogo, entrada: EntradaSessao) -> str:
         texto = self.pipeline.processar(msg, entrada)
+        # guardamos o que interessa p/ histórico do utilizador
         self.historico.registar(
             {
                 "data": getattr(entrada, "data", ""),

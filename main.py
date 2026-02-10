@@ -87,8 +87,16 @@ def main():
 
     # loop
     while True:
-        raw_estado = pedir_estado_com_emojis(opcoes, default=None)
-        estado = raw_estado.strip().lower()
+        escolha = pedir_estado_com_emojis(opcoes, default=None, extras={"h": "histórico", "q": "sair"})
+        if escolha == "h":
+            mostrar_historico(perfil.historico[-5:], titulo="Histórico (últimas 5)")
+            input("Enter para voltar...")
+            continue
+        if escolha == "q":
+            mostrar_info("Foi um gosto ajudar-te!")
+            return
+
+        estado = opcoes[escolha][1].strip().lower()
 
         # (opcional) se implementares catalogo.normalizar_estado, troca pela linha abaixo:
         # estado = catalogo.normalizar_estado(raw_estado)
@@ -140,7 +148,7 @@ def main():
         )
         mostrar_historico(perfil.historico[-5:], titulo="Histórico (últimas 5)")
     else:
-        mostrar_info("Foi um gosto ajudar-lhe!")
+        mostrar_info("Foi um gosto ajudar-te!")
 
 
 if __name__ == "__main__":
